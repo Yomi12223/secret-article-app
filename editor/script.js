@@ -94,3 +94,47 @@ function loadSavedArticles() {
     </div>
   `).join('');
 }
+
+// =============================
+// 🔥 一時保存 & 復元処理
+// =============================
+
+// 定期的に本文・タイトル・タグを保存
+setInterval(() => {
+  const draft = {
+    title: document.getElementById('title')?.value || '',
+    body: document.getElementById('body')?.value || '',
+    tags: Array.from(document.querySelectorAll('.tag-item')).map(el => el.textContent)
+  };
+  sessionStorage.setItem('draft', JSON.stringify(draft));
+}, 5000); // 5秒ごと保存
+
+// ページ読み込み時にドラフト復元
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('draft');
+  if (saved) {
+    const { title, body, tags } = JSON.parse(saved);
+    document.getElementById('title').value = title || '';
+    document.getElementById('body').value = body || '';
+    const tagList = document.getElementById('tagList');
+    if (tagList) {
+      tagList.innerHTML = '';
+      tags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tag-item';
+        span.textContent = tag;
+        tagList.appendChild(span);
+      });
+    }
+  }
+});
+
+// 離脱時に警告（保存されてない場合）
+window.addEventListener('beforeunload', function (e) {
+  const title = document.getElementById('title')?.value.trim();
+  const body = document.getElementById('body')?.value.trim();
+  if (title || body) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
