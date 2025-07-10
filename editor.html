@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdownエディタ</title>
+  <style>
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: sans-serif;
+      padding: 1em;
+    }
+    #editor {
+      width: 100%;
+      height: 300px;
+      margin-top: 1em;
+    }
+    .toggle-button {
+      background: #21262d;
+      color: #58a6ff;
+      border: none;
+      padding: 0.5em 1em;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin-bottom: 0.5em;
+    }
+    .toolbar {
+      display: none;
+      flex-direction: column;
+      gap: 0.5em;
+    }
+    .toolbar button {
+      background: #30363d;
+      color: #fff;
+      border: none;
+      padding: 0.5em;
+      text-align: left;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-button" onclick="toggleToolbar()">▶ 装飾</button>
+  <div class="toolbar" id="toolbar">
+    <button onclick="insert('**太字**')">** 太字</button>
+    <button onclick="insert('*斜体*')">* 斜体</button>
+    <button onclick="insert('~~取り消し~~')">~~ 取り消し</button>
+    <button onclick="insert('---')">--- 横線</button>
+    <button onclick="insert('[テキスト](URL)')">[リンク]</button>
+    <button onclick="insert('![alt](画像URL)')">画像挿入</button>
+    <button onclick="insert('```\nコード\n```')">コードブロック</button>
+  </div>
+
+  <textarea id="editor" placeholder="ここにMarkdownを書いてください..."></textarea>
+
+  <script>
+    function toggleToolbar() {
+      const bar = document.getElementById('toolbar');
+      bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
+    }
+    function insert(text) {
+      const editor = document.getElementById('editor');
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const before = editor.value.substring(0, start);
+      const after = editor.value.substring(end);
+      editor.value = before + text + after;
+      editor.focus();
+      editor.setSelectionRange(start + text.length, start + text.length);
+    }
+  </script>
+</body>
+</html>
