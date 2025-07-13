@@ -36,15 +36,31 @@ function saveArticle() {
 }
 
 function previewArticle() {
-  const body = document.getElementById('body').value.trim();
-  const previewWindow = window.open('', '_blank');
-  previewWindow.document.write(`
-    <html><head><title>プレビュー</title></head>
-    <body style="padding: 2rem; background: #111; color: #eee;">
-      ${marked.parse(body)}
-    </body></html>
-  `);
+  const body = document.getElementById('editor').value.trim(); // ←ここを修正！
+  const preview = document.getElementById('preview');
+
+  if (!body) {
+    showMessage('本文が入力されていません！');
+    return;
+  }
+
+  let markdownText = body;
+  markdownText = markdownText.replace(/<img[^>]*>/gi, '');
+  markdownText = markdownText.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
+
+  preview.innerHTML = marked.parse(markdownText);
+  preview.style.display = 'block';
+  document.getElementById('editor').style.display = 'none';
+
+  const btnPreview = document.getElementById('btn-preview');
+  btnPreview.textContent = '編集に戻る';
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnPreview = document.getElementById('btn-preview');
+  btnPreview.addEventListener('click', previewArticle);
+});
+
 
 function showMessage(text) {
   let msg = document.getElementById('message');
