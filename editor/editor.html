@@ -3,90 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Markdownエディタ</title>
-  <style>
-    body {
-      background: #0d1117;
-      color: #c9d1d9;
-      font-family: sans-serif;
-      padding: 1em;
-    }
-    #editor {
-      width: 100%;
-      height: 300px;
-      margin-top: 1em;
-    }
-    .toggle-button {
-      background: #21262d;
-      color: #58a6ff;
-      border: none;
-      padding: 0.5em 1em;
-      cursor: pointer;
-      font-size: 1.2em;
-      margin-bottom: 0.5em;
-    }
-    .toolbar {
-      display: none;
-      flex-direction: column;
-      gap: 0.5em;
-    }
-    .toolbar button {
-      background: #30363d;
-      color: #fff;
-      border: none;
-      padding: 0.5em;
-      text-align: left;
-      cursor: pointer;
-    }
-    #controls {
-      margin-top: 1em;
-      display: flex;
-      gap: 1em;
-      flex-wrap: wrap;
-    }
-    #image-preview {
-      margin-top: 1em;
-      max-width: 100%;
-    }
-  </style>
-    <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>秘密基地記事作成アプリ</title>
-  <!-- ✅ CSSファイルのパス修正 -->
-<link rel="stylesheet" href="../style.css">
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <!-- スタイルとPWA関連 -->
+  <link rel="stylesheet" href="../style.css">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../icons/icon-192.png" type="image/png">
   <meta name="theme-color" content="#000000">
-  <script src="service-worker.js"></script>
 </head>
 <body>
-  <button class="toggle-button" onclick="toggleToolbar()">▶ 装飾</button>
-  <div class="toolbar" id="toolbar">
-    <button onclick="insert('**太字**')">** 太字</button>
-    <button onclick="insert('*斜体*')">* 斜体</button>
-    <button onclick="insert('~~取り消し~~')">~~ 取り消し</button>
-    <button onclick="insert('---')">--- 横線</button>
-    <button onclick="insert('[テキスト](URL)')">[リンク]</button>
-    <button onclick="insert('![alt](画像URL)')">画像挿入</button>
-    <button onclick="insert('```\nコード\n```')">コードブロック</button>
-  </div>
+  <header>
+    <h1>📖 記事エディタ</h1>
+  </header>
 
-  <textarea id="editor" placeholder="ここにMarkdownを書いてください..."></textarea>
+  <main>
+    <button class="toggle-button" onclick="toggleToolbar()">▶ 装飾</button>
+    <div class="toolbar" id="toolbar">
+      <button onclick="insert('**太字**')">** 太字</button>
+      <button onclick="insert('*斜体*')">* 斜体</button>
+      <button onclick="insert('~~取り消し~~')">~~ 取り消し</button>
+      <button onclick="insert('---')">--- 横線</button>
+      <button onclick="insert('[テキスト](URL)')">[リンク]</button>
+      <button onclick="insert('![alt](画像URL)')">画像挿入</button>
+      <button onclick="insert('```\nコード\n```')">コードブロック</button>
+    </div>
 
-  <div id="controls">
-    <button onclick="saveArticle()">💾 記事保存</button>
-    <button onclick="loadArticle()">📂 記事読み込み</button>
-    <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
-  </div>
+    <textarea id="editor" placeholder="ここにMarkdownを書いてください..."></textarea>
 
-  <img id="image-preview" src="" alt="" style="display:none;">
+    <div id="controls">
+      <button onclick="saveArticle()">💾 記事保存</button>
+      <button onclick="loadArticle()">📂 記事読み込み</button>
+      <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+      <button id="btn-preview">プレビュー</button>
+    </div>
 
+    <img id="image-preview" src="" alt="" style="display:none;">
+    <div id="preview" style="display:none;"></div>
+  </main>
+
+  <!-- ライブラリとスクリプト -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     function toggleToolbar() {
       const bar = document.getElementById('toolbar');
       bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
     }
+
     function insert(text) {
       const editor = document.getElementById('editor');
       const start = editor.selectionStart;
@@ -97,11 +59,13 @@
       editor.focus();
       editor.setSelectionRange(start + text.length, start + text.length);
     }
+
     function saveArticle() {
       const content = document.getElementById('editor').value;
       localStorage.setItem('savedArticle', content);
       alert('記事を保存しました！');
     }
+
     function loadArticle() {
       const content = localStorage.getItem('savedArticle');
       if (content) {
@@ -111,6 +75,7 @@
         alert('保存された記事がありません');
       }
     }
+
     function handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
@@ -125,36 +90,33 @@
         reader.readAsDataURL(file);
       }
     }
-  </script>
 
+    function togglePreview() {
+      const editor = document.getElementById('editor');
+      const preview = document.getElementById('preview');
+      const btn = document.getElementById('btn-preview');
 
-<div id="preview" style="display:none;"></div>
-<button id="btn-preview" onclick="togglePreview()">プレビュー</button>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script>
-  function togglePreview() {
-    const editor = document.getElementById('editor');
-    const preview = document.getElementById('preview');
-    const btn = document.getElementById('btn-preview');
-
-    if (preview.style.display === 'block') {
-      preview.style.display = 'none';
-      editor.style.display = 'block';
-      btn.textContent = 'プレビュー';
-    } else {
-      let markdownText = editor.value;
-      markdownText = markdownText.replace(/<img[^>]*>/gi, '');
-      markdownText = markdownText.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
-      preview.innerHTML = marked.parse(markdownText);
-      preview.style.display = 'block';
-      editor.style.display = 'none';
-      btn.textContent = '編集に戻る';
+      if (preview.style.display === 'block') {
+        preview.style.display = 'none';
+        editor.style.display = 'block';
+        btn.textContent = 'プレビュー';
+      } else {
+        let markdownText = editor.value;
+        markdownText = markdownText.replace(/<img[^>]*>/gi, '');
+        markdownText = markdownText.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
+        preview.innerHTML = marked.parse(markdownText);
+        preview.style.display = 'block';
+        editor.style.display = 'none';
+        btn.textContent = '編集に戻る';
+      }
     }
-  }
-</script>
 
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btn-preview');
+      if (btn) {
+        btn.addEventListener('click', togglePreview);
+      }
+    });
+  </script>
 </body>
 </html>
