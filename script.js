@@ -162,6 +162,25 @@ function togglePreview() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const previewBtn = document.getElementById('btn-preview');
-  if (previewBtn) previewBtn.addEventListener('click', togglePreview);
+  const btnPreview = document.getElementById('btn-preview');
+  const editor = document.getElementById('editor');
+  const preview = document.getElementById('preview');
+
+  if(btnPreview && editor && preview) {
+    btnPreview.addEventListener('click', () => {
+      if (preview.style.display === 'block') {
+        preview.style.display = 'none';
+        editor.style.display = 'block';
+        btnPreview.textContent = 'プレビュー';
+      } else {
+        let markdownText = editor.value;
+        markdownText = markdownText.replace(/<img[^>]*>/gi, '');
+        markdownText = markdownText.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
+        preview.innerHTML = marked.parse(markdownText);
+        preview.style.display = 'block';
+        editor.style.display = 'none';
+        btnPreview.textContent = '編集に戻る';
+      }
+    });
+  }
 });
