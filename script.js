@@ -1,16 +1,15 @@
-// 保存ボタン
 document.addEventListener('DOMContentLoaded', () => {
-  const saveBtn = document.getElementById('saveBtn');
-  const previewBtn = document.getElementById('previewBtn');
+  const saveBtn = document.getElementById('btn-save'); // 追加修正
+  const previewBtn = document.getElementById('btn-preview'); // 正しく修正
 
   if (saveBtn) saveBtn.addEventListener('click', saveArticle);
-  if (previewBtn) previewBtn.addEventListener('click', previewArticle);
+  if (previewBtn) previewBtn.addEventListener('click', togglePreview); // ← togglePreview関数を呼ぶ
 
-  // 一覧ページの場合は一覧を読み込む
   if (location.pathname.includes('saved.html')) {
     loadSavedArticles();
   }
 });
+
 
 function saveArticle() {
   const title = document.getElementById('title').value.trim();
