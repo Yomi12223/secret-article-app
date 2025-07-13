@@ -51,5 +51,17 @@
       });
     }
   </script>
+  <script>
+navigator.serviceWorker.getRegistrations().then(function(registrations) {
+  for (let reg of registrations) {
+    reg.unregister().then(() => {
+      caches.keys().then(function(names) {
+        for (let name of names) caches.delete(name);
+      });
+    });
+  }
+});
+</script>
+
 </body>
 </html>
