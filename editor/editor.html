@@ -41,82 +41,10 @@
     <div id="preview" style="display:none;"></div>
   </main>
 
-  <!-- ライブラリとスクリプト -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script>
-    function toggleToolbar() {
-      const bar = document.getElementById('toolbar');
-      bar.style.display = (bar.style.display === 'flex') ? 'none' : 'flex';
-    }
+  <!-- ライブラリのみ読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="../script.js"></script>
 
-    function insert(text) {
-      const editor = document.getElementById('editor');
-      const start = editor.selectionStart;
-      const end = editor.selectionEnd;
-      const before = editor.value.substring(0, start);
-      const after = editor.value.substring(end);
-      editor.value = before + text + after;
-      editor.focus();
-      editor.setSelectionRange(start + text.length, start + text.length);
-    }
 
-    function saveArticle() {
-      const content = document.getElementById('editor').value;
-      localStorage.setItem('savedArticle', content);
-      alert('記事を保存しました！');
-    }
-
-    function loadArticle() {
-      const content = localStorage.getItem('savedArticle');
-      if (content) {
-        document.getElementById('editor').value = content;
-        alert('記事を読み込みました！');
-      } else {
-        alert('保存された記事がありません');
-      }
-    }
-
-    function handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imageUrl = e.target.result;
-          insert(`![画像](${imageUrl})`);
-          const preview = document.getElementById('image-preview');
-          preview.src = imageUrl;
-          preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function togglePreview() {
-      const editor = document.getElementById('editor');
-      const preview = document.getElementById('preview');
-      const btn = document.getElementById('btn-preview');
-
-      if (preview.style.display === 'block') {
-        preview.style.display = 'none';
-        editor.style.display = 'block';
-        btn.textContent = 'プレビュー';
-      } else {
-        let markdownText = editor.value;
-        markdownText = markdownText.replace(/<img[^>]*>/gi, '');
-        markdownText = markdownText.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
-        preview.innerHTML = marked.parse(markdownText);
-        preview.style.display = 'block';
-        editor.style.display = 'none';
-        btn.textContent = '編集に戻る';
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('btn-preview');
-      if (btn) {
-        btn.addEventListener('click', togglePreview);
-      }
-    });
-  </script>
 </body>
 </html>
