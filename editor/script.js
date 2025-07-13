@@ -138,3 +138,28 @@ window.addEventListener('beforeunload', function (e) {
     e.returnValue = '';
   }
 });
+
+function togglePreview() {
+  const editor = document.getElementById('editor');
+  const preview = document.getElementById('preview');
+  const btn = document.getElementById('btn-preview');
+
+  if (preview.style.display === 'block') {
+    // プレビュー表示中 → 編集モードに戻す
+    preview.style.display = 'none';
+    editor.style.display = 'block';
+    btn.textContent = 'プレビュー';
+  } else {
+    // プレビュー表示に切り替え
+    let markdownText = editor.value;
+
+    // ✅ imgタグ（HTML）や ![]()（Markdown）を除去
+    markdownText = markdownText.replace(/<img[^>]*>/gi, '');
+    markdownText = markdownText.replace(/!\\[[^\\]]*\\]\\([^)]*\\)/g, '');
+
+    preview.innerHTML = marked.parse(markdownText);
+    preview.style.display = 'block';
+    editor.style.display = 'none';
+    btn.textContent = '編集に戻る';
+  }
+}
