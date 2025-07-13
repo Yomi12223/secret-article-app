@@ -125,11 +125,34 @@
     }
   </script>
 
-  <textarea id="editor"></textarea>
+
 <div id="preview" style="display:none;"></div>
 <button id="btn-preview" onclick="togglePreview()">プレビュー</button>
 
+
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  function togglePreview() {
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+    const btn = document.getElementById('btn-preview');
+
+    if (preview.style.display === 'block') {
+      preview.style.display = 'none';
+      editor.style.display = 'block';
+      btn.textContent = 'プレビュー';
+    } else {
+      let markdownText = editor.value;
+      markdownText = markdownText.replace(/<img[^>]*>/gi, '');
+      markdownText = markdownText.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
+      preview.innerHTML = marked.parse(markdownText);
+      preview.style.display = 'block';
+      editor.style.display = 'none';
+      btn.textContent = '編集に戻る';
+    }
+  }
+</script>
 
 </body>
 </html>
